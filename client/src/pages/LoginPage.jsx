@@ -1,87 +1,109 @@
 import React, { useState } from "react";
-import assets from "../assets/assets";
+import assets from '../assets/assets'
 
-const AuthPage = () => {
+const LoginPage = () => {
+  const [currState, setCurrState] = useState("Sign up")
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [bio, setBio] = useState("")
   const [isDataSubmitted, setIsDataSubmitted] = useState(false);
-  const [currState, setCurrState] = useState("Login");
+  const onnSubmitHandler =(event)=>{
+    event.preventDefault();
 
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [bio, setBio] = useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setIsDataSubmitted(true);
-    console.log({ fullName, email, password, bio });
-  };
-
+    if(currState === 'Sign up' && !isDataSubmitted){
+      setIsDataSubmitted(true)
+    }
+  }
   return (
-    <div className="min-h-screen flex flex-col sm:flex-row items-center justify-center bg-gray-900 text-white p-6">
+    <div className="min-h-screen bg-cover bg-center flex items-center justify-center gap-8 sm:justify-evenly max-sm:flex-col backdrop-blur-2xl">
+      {/*------left-------*/}
+      <img src={assets.logo_big} alt="" className="w-[min(30vw,250px)]"/>
       
-      {/* Left side (logo) */}
-      <div className="flex-1 flex justify-center items-center mb-6 sm:mb-0">
-        <img src={assets.logo} alt="Logo" className="w-32 sm:w-48" />
-      </div>
-
-      {/* Right side (form) */}
-      <div className="flex-1 flex justify-center items-center">
-        {!isDataSubmitted && (
-          <form
-            onSubmit={handleSubmit}
-            className="border-2 bg-white/10 border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg w-[300px] sm:w-[400px]"
-          >
-            <h2 className="font-medium text-2xl flex justify-between items-center">
-              {currState === "signUp" ? "Sign Up" : "Login"}
-              <img src={assets.arrow_icon} alt="" className="w-5 cursor-pointer" />
-            </h2>
-
-            {currState === "signUp" && (
-              <>
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  className="p-2 rounded bg-gray-800 text-white outline-none"
-                />
-                <input
-                  type="text"
-                  placeholder="Bio"
-                  value={bio}
-                  onChange={(e) => setBio(e.target.value)}
-                  className="p-2 rounded bg-gray-800 text-white outline-none"
-                />
-              </>
-            )}
-
-            <input
-              type="email"
-              placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="p-2 rounded bg-gray-800 text-white outline-none"
-            />
-
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="p-2 rounded bg-gray-800 text-white outline-none"
-            />
-
-            <button
-              type="submit"
-              className="bg-gradient-to-r from-purple-400 to-purple-600 text-white font-medium py-2 px-4 rounded-full"
-            >
-              {currState === "signUp" ? "Sign Up" : "Login"}
-            </button>
-          </form>
+      {/*------right-------*/}
+      <form  onSubmit={onnSubmitHandler} className="border-2 bg-white/8 text-white border-gray-500 p-6 flex flex-col gap-6 rounded-lg shadow-lg">
+        <h2 className="font-medium text-2xl flex justify-between items-center">
+          {currState}
+          {isDataSubmitted &&  <img 
+        onClick={() => setIsDataSubmitted(false)} 
+        src={assets.arrow_icon} 
+        alt="" 
+        className="w-5 cursor-pointer" 
+                        />
+}
+         
+        </h2>
+        
+        {currState === "Sign up" && !isDataSubmitted && (
+          <input 
+            onChange={(e) => setFullName(e.target.value)} 
+            value={fullName}
+            type="text" 
+            className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+            placeholder="FULL NAME" 
+            required
+          />
         )}
-      </div>
-    </div>
-  );
-};
+        
+        {!isDataSubmitted && (
+          <>
+            <input 
+              onChange={(e) => setEmail(e.target.value)} 
+              value={email}
+              type="email" 
+              placeholder="Email Address" 
+              required
+              className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+            />
+            <input 
+              onChange={(e) => setPassword(e.target.value)} 
+              value={password}
+              type="password" 
+              placeholder="Password" 
+              required
+              className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+            />
+          </>
+        )}
+        
+        {currState === "Sign up" && isDataSubmitted && (
+          <textarea 
+            onChange={(e) => setBio(e.target.value)} 
+            value={bio}
+            rows={4} 
+            className="p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Provide a short bio.." 
+            required
+          />
+        )}
+        
+        <button 
+          type="submit" 
+          className="py-3 bg-gradient-to-r from-purple-400 to-violet-600 text-white rounded-md cursor-pointer"
+        >
+          {currState === "Sign up" ? "Create Account" : "Login Now"}
+        </button>
+        
+        <div className="flex items-center gap-2 text-sm text-gray-500">
+          <input type="checkbox" />
+          <p>Agree to the terms of use & privacy policy</p>
+        </div>
+        
+        <div className="flex flex-col gap-2">
+          {currState==="Sign up"? (
+            <p className="text-sm textray-600"> Already have an acoount? <span
+            onClick={()=>{setCurrState("Login"); setIsDataSubmitted(false)}}
+            className=" font-medium text-violet-500 cursor-pointer">Login here</span></p>
+          ): (
+              <p className="text-sm text-gray-600">Create an Account <span
+              onClick={()=>setCurrState("Sign up")}
+               className=" font-medium text-violet-500 cursor-pointer">cllick here</span></p>
+          )}
 
-export default AuthPage;
+        </div>
+      </form>
+    </div>
+  )
+}
+
+export default LoginPage
