@@ -1,61 +1,131 @@
-import React, { useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import assets from '../assets/assets';
+import { AuthContext } from '../../context/AuthContext';
 
 const ProfilePage = () => {
+  const { authUser, updateProfile } = useContext(AuthContext);
+
   const [selectedImg, setSelectedImg] = useState(null);
-  const [name, setName] = useState("zubayer");
-  const [bio, setBio] = useState("Hi everyone");
+  const [previewImg, setPreviewImg] = useState(null);
+  const [name, setName] = useState("");
+  const [bio, setBio] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
   const navigate = useNavigate();
 
-  const handleSubmit = async (e)=>{
+  // Sync form fields with authUser when loaded
+  useEffect(() => {
+    if (authUser) {
+      setName(authUser.fullname || "");
+      setBio(authUser.bio || "");
+    }
+  }, [authUser]);
+
+  // Preview selected image
+  useEffect(() => {
+    if (!selectedImg) {
+      setPreviewImg(null);
+      return;
+    }
+    const objectUrl = URL.createObjectURL(selectedImg);
+    setPreviewImg(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [selectedImg]);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate('/')
-  }
+    setLoading(true);
+    setError(null);
+
+    try {
+      let body = { fullname: name, bio };
+
+      if (selectedImg) {
+        const base64image = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(selectedImg);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (err) => reject(err);
+        });
+        body.profilePic = base64image;
+      }
+
+      await updateProfile(body);
+      navigate('/');
+    } catch (err) {
+      console.error("Failed to update profile:", err);
+      setError("Profile update failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className='min-h-screen bg-cover bg-no-repeat flex items-center justify-center'>
       <div className='w-5/6 max-w-2xl backdrop-blur-2xl text-gray-300 border-2 border-gray-600 flex items-center justify-between max-sm:flex-col-reverse rounded-lg'>
-        <form  onSubmit={handleSubmit}
-        className='flex flex-col gap-5 p-10 flex-1'>
+        
+        <form onSubmit={handleSubmit} className='flex flex-col gap-5 p-10 flex-1'>
           <h3 className='text-lg'>Profile Details</h3>
 
-                                <label 
-  htmlFor="avatar" 
-  className='flex items-center gap-3 cursor-pointer text-gray-300 font-medium'
->
-  <input 
-    onChange={(e) => setSelectedImg(e.target.files[0])} 
-    type="file" 
-    id='avatar' 
-    accept='.png, .jpg, .jpeg'  
-    hidden
-  />
-  
-  <img 
-    src={selectedImg ? URL.createObjectURL(selectedImg) : assets.avatar_icon} 
-    alt="Profile" 
-    className={`w-12 h-12 object-cover ${selectedImg ? 'rounded-full' : ''}`} 
-  />
+          {/* Image Upload */}
+          <label htmlFor="avatar" className='flex items-center gap-3 cursor-pointer text-gray-300 font-medium'>
+            <input 
+              type="file" 
+              id='avatar' 
+              accept='.png, .jpg, .jpeg'  
+              hidden
+              onChange={(e) => setSelectedImg(e.target.files[0])}
+            />
+            <img 
+              src={previewImg || assets.avatar_icon} 
+              alt="Profile" 
+              className={`w-12 h-12 object-cover ${selectedImg ? 'rounded-full' : ''}`} 
+            />
+            <span>Upload your profile pic</span>
+          </label> 
 
-  <span>Upload your profile pic</span>
-</label> 
+          {/* Name Input */}
+          <input  
+            type="text" 
+            placeholder='Your name'
+            required
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500' 
+          /> 
 
-<input  onChange={(e)=> setName(e.target.value)} value={name}
-type="text" required placeholder='Your name'  className='p-2 border
-          border-gray-500 rounded-md focus:outline-none focus:ring-2
-          focus:ring-violet-500'/> 
-            <textarea    onChange={(e)=> setBio(e.target.value)} value={bio}
-             placeholder='Write profile bio' required 
-             className='p-2 border border-gray-500 rounded-md focus:outlin-none focus:ring-2
-             focus:ring-violet-500' rows={4}></textarea>
-           
-          <button type='submit' className=' bg-gradient-to-r from-purple-400
-          to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer'>Save</button>
-        
+          {/* Bio Textarea */}
+          <textarea    
+            placeholder='Write profile bio'
+            required
+            rows={4}
+            value={bio}
+            onChange={(e) => setBio(e.target.value)}
+            className='p-2 border border-gray-500 rounded-md focus:outline-none focus:ring-2 focus:ring-violet-500' 
+          ></textarea>
+
+          {/* Error Message */}
+          {error && <p className='text-red-500'>{error}</p>}
+
+          {/* Submit Button */}
+          <button 
+            type='submit' 
+            disabled={loading} 
+            className='bg-gradient-to-r from-purple-400 to-violet-600 text-white p-2 rounded-full text-lg cursor-pointer disabled:opacity-50'
+          >
+            {loading ? 'Saving...' : 'Save'}
+          </button>
         </form>
-        <img className='max-w-44 aspect-square rounded-full mx-10 max-sm:mt-10' 
-              src={assets.logo_icon} alt="" />
+
+        {/* Side Logo */}
+        <img 
+          src={assets.logo_icon} 
+          alt="Logo"
+          className={`max-w-44 aspect-square mx-10 max-sm:mt-10 ${selectedImg ? 'rounded-full' : ''}`} 
+        />
       </div>
     </div>
   );
