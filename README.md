@@ -1,5 +1,16 @@
 # ChatGenie
 
+
+## Screenshots
+<img src="screenshot/Screenshot 2025-09-05 at 16-37-29 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/Screenshot 2025-09-05 at 16-37-50 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/Screenshot 2025-09-05 at 16-38-16 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/Screenshot 2025-09-05 at 16-38-28 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/Screenshot 2025-09-05 at 16-38-56 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/Screenshot 2025-09-05 at 16-39-14 ChatGenie -elisha.png" width="300"/>
+<img src="screenshot/pexels-anniroenkae-3109807(1).jpg" width="300"/>
+
+
 **ChatGenie** is a full-stack real-time chat application built with **React, Node.js, Express, Socket.IO, and MongoDB**.  
 It features **signup/login authentication**, secure password storage using **bcryptjs**, and a responsive, modern interface styled with **Tailwind CSS**. The project uses **Vite** for fast React builds and is structured as a monorepo for clean front-end/back-end separation.  
 The roadmap includes a **cross-platform mobile app** for web + mobile chat experience.
