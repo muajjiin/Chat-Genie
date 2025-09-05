@@ -8,7 +8,6 @@
 <img src="screenshot/Screenshot 2025-09-05 at 16-38-28 ChatGenie -elisha.png" width="800"/>
 <img src="screenshot/Screenshot 2025-09-05 at 16-38-56 ChatGenie -elisha.png" width="800"/>
 <img src="screenshot/Screenshot 2025-09-05 at 16-39-14 ChatGenie -elisha.png" width="800"/>
-<img src="screenshot/pexels-anniroenkae-3109807(1).jpg" width="800"/>
 
 
 **ChatGenie** is a full-stack real-time chat application built with **React, Node.js, Express, Socket.IO, and MongoDB**.  
